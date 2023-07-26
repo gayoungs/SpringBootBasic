@@ -40,18 +40,7 @@ dependencies {
 //타임러프를 뷰로 사용하려면
 implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-
-
-
 }
-
-
-
-
-
-
-
-
 
 tasks.named('test') {
 	useJUnitPlatform()
