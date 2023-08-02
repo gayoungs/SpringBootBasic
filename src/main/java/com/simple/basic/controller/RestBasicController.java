@@ -197,7 +197,7 @@ public class RestBasicController {
 	 서버에서 보낼데이터는 : SimpleVO
 	 받을 수 있는 restAPI를 생성
 	 */
-	
+	@CrossOrigin("*")
 	@GetMapping("/api/v1/getData/{num}/{name}")
 	public ResponseEntity<SimpleVO> getfetch(@PathVariable("num") int num,
 													  @PathVariable("name") String name) {
