@@ -1,6 +1,6 @@
 package com.simple.basic.command;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +18,5 @@ public class SimpleVO {
 	private String first; //성
 	private String last; //이름
 	private LocalDateTime regdate;
-
+	
 }

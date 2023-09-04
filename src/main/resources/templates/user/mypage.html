@@ -5,8 +5,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-	<h3>유효성 검사 통과</h3>
-
+	마이페이지
+	
+	<th:block th:if="session.username != null">		
+	[[${session.username}]]
+	</th:block>
+	
 </body>
 </html>

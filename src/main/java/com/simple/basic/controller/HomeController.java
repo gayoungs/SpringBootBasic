@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
-	
+
 	@RequestMapping("/")
 	public String home() {
 		return "hello"; //뷰 리졸버의 합성 경로
@@ -18,5 +18,18 @@ public class HomeController {
 	public String res() {
 		return "<h3>abc</h3>";
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

@@ -1,5 +1,6 @@
 package com.simple.basic.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,47 +22,60 @@ import com.simple.basic.memo.service.MemoService;
 @Controller
 @RequestMapping("/memo")
 public class MemoController {
-   
-   @Autowired
-   @Qualifier("memoService") 
-   private MemoService memoSerivce;
-   
-   @GetMapping("/memoList")
-   public String memoList(Model model) {
-      System.out.println("도착..........?");
-      List<MemoVO> memoList = memoSerivce.getList();
-      model.addAttribute("memoList", memoList);
-      
-      return "memo/memoList";
-   }
-   @GetMapping("/memoWrite")
-   public String memoWrite() {
-      return "memo/memoWrite";
-   }
-   
-   //글등록
-   @PostMapping("/memoForm")
-   public String memoForm(@Valid @ModelAttribute("memvo") MemoVO vo ,Errors err,Model model ) {
-      
-      if(err.hasErrors()) {
-         List<FieldError> list = err.getFieldErrors();
-         
-         for(FieldError err2 : list) {
-            if(err2.isBindingFailure()) {
-               model.addAttribute("valid_"+err2.getField(), "메모 입력해주세요");
-            }else {
-               model.addAttribute("valid_"+err2.getField(), err2.getDefaultMessage());            }
-         }
-      
-         return "memo/memoWrite";
-            
-      }else {
-         memoSerivce.registMemo(vo);
-        
-         //목록으로
-         return "redirect:memoList";
-      }
-      
-      
-   }
+	
+	@Autowired
+	@Qualifier("memoService")
+	private MemoService memoService;
+	
+	
+	//목록화면
+	@GetMapping("/memoList")
+	public String memoList(Model model) {
+		
+		//화면에 나갈 데이터
+		ArrayList<MemoVO> list = memoService.getList();
+		model.addAttribute("list", list);
+		
+		return "memo/memoList";
+	}
+	//글쓰기화면
+	@GetMapping("/memoWrite")
+	public String memoWrite() {
+		return "memo/memoWrite";
+	}
+	
+	//글등록
+	@PostMapping("/memoForm")
+	public String memoForm(@Valid @ModelAttribute("vo") MemoVO vo, Errors errors, Model model) {
+		
+		if(errors.hasErrors()) {
+			List<FieldError> list = errors.getFieldErrors();
+			
+			for(FieldError err  :list ) {
+				model.addAttribute("valid_" + err.getField(), err.getDefaultMessage());
+			}
+			
+			return "memo/memoWrite";
+		}
+		
+		memoService.insert(vo);
+		
+		//목록으로
+		return "redirect:/memo/memoList";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

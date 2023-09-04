@@ -1,16 +1,16 @@
 package com.simple.basic.controller;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.ServletInputStream;
-import javax.websocket.server.PathParam;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,50 +18,47 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.simple.basic.command.SimpleVO;
-
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 @RestController //@ResponseBody + @Controller
 public class RestBasicController {
 
 	@GetMapping("/basic")
-	public String basic() {
-		return "<h3>hello world<h3>"; 
+	public  String basic() {
+		return "<h3>hello world</h3>";
 	}
-
-
-	//데이터를 보내는방법 -> @ResponseBody = 자바의 객체를 JSON형식으로 자동 변환
+	
+	
+	//데이터를 보내는 방법 -> @ResponseBody = 자바의 객체를 JSON형식으로 자동 변환
 	@GetMapping("/getObject")
 	public SimpleVO getObject() {
-
 		SimpleVO vo = new SimpleVO(1, "홍", "길동", LocalDateTime.now());
 		return vo;
 	}
-
+		
 	@GetMapping("/getMap")
-	public Map<String,Object> getMap() {
-		Map<String,Object> map = new HashMap<>();
+	public Map<String, Object> getMap() {
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("name", "홍길동");
-
+		
 		return map;
-
 	}
-
+	
 	@GetMapping("/getList")
 	public List<SimpleVO> getList() {
-
-
-		List<SimpleVO> list = new ArrayList();	
-		list.add(new SimpleVO(1,"홍","길동",LocalDateTime.now()));
-		list.add(new SimpleVO(2,"이","길동",LocalDateTime.now()));
-
+		
+		List<SimpleVO> list = new ArrayList<>();
+		list.add( new SimpleVO(1, "홍", "길동", LocalDateTime.now()) );
+		list.add( new SimpleVO(2, "이", "길동", LocalDateTime.now()) );
+		
 		return list;
-
 	}
 	
 	//데이터를 받는 방법
@@ -71,164 +68,171 @@ public class RestBasicController {
 	//http://localhost:8181/getData?sno=1&first=홍길동
 	@GetMapping("/getData")
 	public SimpleVO getData(SimpleVO vo) {
-		
 		System.out.println(vo.toString());
 		
-		return new SimpleVO(2,"이","길동",LocalDateTime.now());
-		
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
 	}
 	
 	//http://localhost:8181/getData2?sno=1&first=홍길동
-	//sno, first는 필수 값이 됩니다.
+	//sno, first는 필수값이 됩니다.
 	@GetMapping("/getData2")
 	public SimpleVO getData2(@RequestParam("sno") int sno,
-			                 @RequestParam("first") String first) {
+							 @RequestParam("first") String first) {
 		
 		System.out.println(sno);
 		System.out.println(first);
 		
-		return new SimpleVO(2,"이","길동",LocalDateTime.now());
-		
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
 	}
 	
 	//http://localhost:8181/getData3/1/홍길동
-	
-	@GetMapping("/getData3/{sno}/{first}") //getData3(고정)/{가변파라미터} 
+	@GetMapping("/getData3/{sno}/{first}")
 	public SimpleVO getData3(@PathVariable("sno") int sno,
 							 @PathVariable("first") String first) {
-		
-		
+
 		System.out.println(sno);
 		System.out.println(first);
-	
 		
-		return new SimpleVO(2,"이","길동",LocalDateTime.now());
-		
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
 	}
 	
-	///////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
 	//post방식의 데이터 받기
 	
-	//보내는 입장에서 form형식의 데이터를 써줘야함
+	//보내는입장에서 form형식의 데이터를 써줘야함
 	@PostMapping("/getForm")
-	public SimpleVO getForm(SimpleVO vo ) {
-		
+	public SimpleVO getForm(SimpleVO vo) { 
 		
 		System.out.println(vo.toString());
-	
-		
-		return new SimpleVO(2,"이","길동",LocalDateTime.now());
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
 	}
-	
-	//보내는 입장에서는 JSON형식의 데이터를 써줘야함
-	// {"sno":1, "first": "홍길동","last" : "이순신"}
+	//보내는입장에서는 JSON형식의 데이터를 써줘야함
+	//{ "sno": "1",  "first": "홍길동",  "last" : "이순신" }
 	@PostMapping("/getJSON")
 	public SimpleVO getJSON(@RequestBody SimpleVO vo) {
 		
-		
-//		ServletInputStream stream;
-//		try {
-//			stream = request.getInputStream();
-//			int result = stream.readLine(new byte[100], 0, 100);
-//			
-//			System.out.println(result);
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-	
-		
 		System.out.println(vo.toString());
 		
-		return new SimpleVO(2,"이","길동",LocalDateTime.now());
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
 	}
 	
-	// {"sno":1, "first": "홍길동","last" : "이순신"}
-		@PostMapping("/getJSON2")
-		public SimpleVO getJSON2(@RequestBody Map<String,Object> map) {
-			
-			System.out.println(map.toString());
-			
-			return new SimpleVO(2,"이","길동",LocalDateTime.now());
-		}
+	//{ "sno": "1",  "first": "홍길동",  "last" : "이순신" }
+	@PostMapping("/getJSON2")
+	public SimpleVO getJSON2(@RequestBody Map<String, Object> map) {
 		
+		//수정작업....
 		
-		////////////////////////////////////////////////////////////////////////
-		//consumer = 반드시 이타입으로 보내라! 명시
-		//producer = 내가 이타입으로 줄게! 명시 (default = json), xml을 사용하려면 xml 데이터바인딩 라이브러리 필요
+		System.out.println(map.toString());
+
+		return new SimpleVO(2, "이", "길동", LocalDateTime.now() );
+	}
 		
+	////////////////////////////////////////////////////////////////////////////
+	//consumer = 반드시 이타입으로 보내라! 명시
+	//producer = 내가 이타입으로 줄게! 명시 (default = json), xml을 사용하려면 xml데이터바인딩 라이브러리필요
+	
+	//보내는타입은 text로 줄게, 너는 json데이터로 보내라
+	@PostMapping(value="/getResult", produces = "text/plain", consumes = "application/json" )
+	public String getResult(@RequestBody String str ) {
 		
-		//{"aaa" : 123}
-		//보내는 타입은 text로 줄게, 너는 json데이터로 보내라
-		@PostMapping(value="/getResult", /*produces ="text/html" produces="application/json"*/ produces="text/plain", /*consumes ="text/plain"*/ consumes="application/json")
-		public String getResult(@RequestBody /*SimpleVO vo*/ String str ) {
-			
-			//System.out.println(vo.toString());
-			System.out.println(str);
-			
-			return "<h3>문자열</h3>";
-			
-		}
+		System.out.println(str);
+		
+		return "<h3>문자열</h3>";
+	}
+	
 	//응답문서 직접작성하기 = ResponseEntity<보낼데이터타입>
 	@PostMapping("/createResponse")
 	public ResponseEntity<SimpleVO> createResponse() {
 		
-		SimpleVO vo = new SimpleVO(1,"홍", "길동", LocalDateTime.now());
+		SimpleVO vo = new SimpleVO(1, "홍", "길동", LocalDateTime.now());
+		
+		//0st
+		//ResponseEntity<SimpleVO> result = new ResponseEntity<>(HttpStatus.OK); //상태코드
+		
 		//1st
-		//ResponseEntity<SimpleVO> result = new ResponseEntity<>(vo, HttpStatus.OK);
+		//ResponseEntity<SimpleVO> result = new ResponseEntity<>(vo, HttpStatus.OK); //데이터, 상태코드
 		
 		//2nd
+		//헤더에 대한 내용정의
 		HttpHeaders header = new HttpHeaders();
 		header.add("Authorization", "JSON WEB TOKEN~~");
 		header.add("Content-Type", "application/json");
 		header.add("Access-Control-Allow-Origin", "*");
-		
-		ResponseEntity<SimpleVO> result = new ResponseEntity<>(vo,header,HttpStatus.OK);//데이터,헤더,상태코드
+				
+		ResponseEntity<SimpleVO> result = new ResponseEntity<>(vo, header, HttpStatus.OK); //데이터, 헤더, 상태코드
 		
 		return result;
 	}
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
 	/*
-	 클라이언트 fetch
-	 요청주소 : /api/v1/getData
-	 메서드 : get
-	 클라이언트에서 보낼데이터는 : num, name
-	 서버에서 보낼데이터는 : SimpleVO
-	 받을 수 있는 restAPI를 생성
-	 */
+	클라이언트 fetch
+	요청주소 : /api/v1/getData
+	메서드 : get
+	클라이언트에서 보낼데이터는 : num, name
+	서버에서 보낼데이터는 : SimpleVO
+	받을 수 있는 restAPI를 생성
+	*/
 	@CrossOrigin("*")
 	@GetMapping("/api/v1/getData/{num}/{name}")
-	public ResponseEntity<SimpleVO> getfetch(@PathVariable("num") int num,
-													  @PathVariable("name") String name) {
-		System.out.println(num); //데이터베이스~~
+	public ResponseEntity<SimpleVO> getFetch( @PathVariable("num") int num,
+											  @PathVariable("name") String name) {
+		
+		System.out.println(num); //데이터베이스~~~
 		System.out.println(name);
 		
-		
-   return new ResponseEntity<> (new SimpleVO(1,"kim", "hong", LocalDateTime.now()),HttpStatus.OK);
+		return new ResponseEntity<>(new SimpleVO(1, "kim", "hong", LocalDateTime.now()) , HttpStatus.OK );
 	}
-	
-
 	
 	/*
 	 클라이언트 fetch
 	 요청주소 : /api/v1/getInfo
-	 클라이언트에서 보낼데이터는  : num, name
+	 메서드 : post
+	 클라이언트에서 보낼데이터는 : num, name
 	 서버에서 보낼데이터는 : 리스트<SimpleVO>
 	 받을 수 있는 restAPI를 생성
-	 RsponseEntity로 응답
+	 ResponseEntity로 응답
+	 
 	 */
-	//@CrossOrigin({"http://localhost:3000","~~~~~"})
-	@CrossOrigin("*")//모든서버에 대한 요청을 허용한다.	
-	@PostMapping(value="api/v1/getInfo", consumes="application/json")
-	public ResponseEntity<List<SimpleVO>> getInfo(@RequestBody Map<String,Object> map) {
+	
+//	@CrossOrigin({ "http://localhost:3000", "~~~~~" })
+	@CrossOrigin("*") //모든서버에 대한 요청을 허용한다.
+	@PostMapping("/api/v1/getInfo")
+	public ResponseEntity<List<SimpleVO>> getInfo( @RequestBody Map<String, Object> map ) {
 		
 		System.out.println(map.toString());
 		List<SimpleVO> list = new ArrayList<>();
-		list.add(new SimpleVO(1,"홍","길동",LocalDateTime.now()));
+		list.add( new SimpleVO(1, "홍", "길동", LocalDateTime.now()) );
+		
+		
 		
 		return new ResponseEntity<>(list, HttpStatus.OK);
-		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
-

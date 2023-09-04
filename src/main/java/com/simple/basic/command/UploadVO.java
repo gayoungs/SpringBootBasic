@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UploadVO {
-	
-	private MultipartFile file;
 
+	private MultipartFile file;
 }
